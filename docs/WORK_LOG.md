@@ -141,4 +141,18 @@
   - docs/WORK_LOG.md (Log #5)
   - outputs/説明資料_PAI最終課題_cal29292929.pdf
 
+### Log #6: 公式OP/EDジングル・スライドテンプレート・YouTube概要欄テンプレート統合およびYouTubeテストアップロード検証
+- **Timestamp**: `2026-10-27 07:41 JST`
+- **Category**: `official-templates-video`
+- **Summary**: 松尾研Slack (#11) 配布の公式OP/EDジングル、公式スライド背景、YouTube概要欄テンプレートを動画・提出物生成パイプラインに完全統合
+- **Details**:
+  - assets/official_templates/ に公式OP (PAI応用1_最終課題_OP.mp4, 1920x1080)、公式ED (PAI応用1_最終課題_ED.mp4, 1920x1080)、公式スライド背景 (PAI応用1_最終課題_スライド.jpg, 1920x1080)、および YouTube概要欄テンプレート (youtube_description_template.txt) を配置・NFC正規化
+  - scripts/05_build_video_and_report.py をアップデートし、OPジングル → 公式スライド背景タイトルカード(5s) → 1920x1080 ワイド画面タスク実行ダッシュボード(59s, 等倍1.0x明記) → 公式スライド背景評価サマリー(5s) → EDジングル をシームレスに連結する build_official_template_video() を実装
+  - ffprobe にて生成動画 (outputs/PAI最終課題_cal29292929_official_template.mp4 および outputs/PAI最終課題_cal29292929.mp4) が 1920x1080 H.264 (yuv420p, 30fps) + AAC (48kHz, stereo)、再生時間 75.03秒（規定の60〜180秒以内）であることを検証完了
+  - outputs/youtube_description_ready.txt に公式概要欄テンプレート全文と課題概要・再生速度(1.0x)・GitHub URLを統合して出力
+- **Metrics / Artifacts**:
+  - video=outputs/PAI最終課題_cal29292929_official_template.mp4 (1920x1080, H.264+AAC, 75.03s)
+  - description=outputs/youtube_description_ready.txt
+  - pii_check=PASS
+
 <!-- WORK_LOG_ENTRIES_END -->

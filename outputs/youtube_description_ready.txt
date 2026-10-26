@@ -1,0 +1,21 @@
+【Physical AI講座2026 応用編1｜最終課題】
+東京大学 松尾・岩澤研究室が開講する「Physical AI講座2026 応用編1」は、AIとロボットの融合領域におけるシステム構築を実践的に学び、AIロボットの開発・運用に必要な知識と技術の習得を目指す講座です。
+本講座では、AIロボット開発におけるデータ収集・モデル学習・検証のサイクルを支えるMLOps・RobOpsをはじめ、コンピュータアーキテクチャ、通信技術、Docker、ROS2など、ロボットシステムの開発に必要な基盤技術について体系的に学びました。
+本動画は、講座で習得した知識や技術を活用し、学習成果として制作した最終課題の成果物です。
+■ 講座詳細
+Physical AI講座2026 応用編1
+東京大学 松尾・岩澤研究室
+weblab.t.u-tokyo.ac.jp/lecture/course-list/physical-ai/advanced1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+■ 提出情報・課題概要
+・Omnicampus アカウント名: cal29292929 (ID: KfvZJ6)
+・再生速度: 等倍（1.0x Real-Time）
+・使用ハードウェア: Open-Source 6-DoF Robot Arm SO-101 (Leader-Follower + 手首マウントUVCリストカメラ)
+・課題テーマ: SO-101 リストカメラ能動視覚（Eye-in-Hand Active Perception）× VLM・模倣学習による自律検査・仕分けシステム
+・内容:
+  1. 俯瞰スキャンで候補ワークピースの位置を特定後、手首カメラを対象物直上8cmへ接近させて高解像度な近接外観検査を実行
+  2. Multi-Modal VLM による微細傷・QRラベル検査と、安全角度制限付きIK / LeRobot (ACT・SmolVLA) による良品(Tray A)・要確認品(Tray B)への自律仕分け
+  3. 第1〜6回講義の技術（RoboOps自動テストCI、USB帯域確認・udev固定、最大関節ステップ補間、GT対予測MSE診断）を統合
+・GitHub リポジトリ: https://github.com/cal29292929/pai-so101-final-project
+（※規定に基づき、動画・コード・説明資料に個人情報は一切含めておりません）
