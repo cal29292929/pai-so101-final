@@ -126,4 +126,19 @@
   - `tests/test_roboops_pipeline.py` (`100% PASS`)
   - `.github/workflows/roboops_ci.yml`
 
+### Log #5: 松尾研 Physical AI Slack（#11 全体連絡・#18 応用1最終課題・#12 質問・#08 実機）読み取り調査＆優秀生選出ルール確認
+- **Timestamp**: `2026-10-27 07:30 JST`
+- **Category**: `slack-info`
+- **Summary**: 松尾研 Physical AI 公式Slack各チャンネルの運営回答・アナウンスを調査し、優秀生選出枠の採点仕様・匿名性規定・使用言語・公式任意アセットを確認。
+- **Details**:
+  - 【優秀生選出枠と修了判定の公式仕様（10/23 運営回答）】『最終課題_優秀生選出用』に提出した場合、修了判定も通常枠ではなく『最終課題_優秀生選出用』に提出された成果物で直接判定される。別タスクや追加課題は一切なく、同じ最終課題を両方の提出口に出す仕組みであり、締切前の最新提出が採点対象となる。
+  - 【匿名性・アカウント名規定（運営回答）】GitHub / YouTube のユーザー名や GitHub の noreply メールアドレス（users.noreply.github.com）は、単体または組み合わせで個人の本名・所属等が特定されないものであれば使用可能（cal29292929 および KfvZJ6 は100%規定準拠）。
+  - 【使用言語規定】説明資料（レポートPDF）・コード・動画の言語は日本語・英語のどちらでも可。
+  - 【公式提供の任意アセット（#11 アナウンス）】YouTube概要欄テンプレート、オープニング/エンディングジングル、およびスライド画像（PAI応用1_最終課題_スライド.jpg）が任意利用アセットとして案内されていることを確認（Quriダンプ・ローカルPDF内のリンクも照合済み）。
+- **Metrics / Artifacts**:
+  - Slack channels verified: #11, #18, #12, #08
+  - Anonymity & PII compliance: 100% PASS (cal29292929 / KfvZJ6)
+  - docs/WORK_LOG.md (Log #5)
+  - outputs/説明資料_PAI最終課題_cal29292929.pdf
+
 <!-- WORK_LOG_ENTRIES_END -->
