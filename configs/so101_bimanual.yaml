@@ -1,0 +1,47 @@
+# Step 2: 2セット目組立後の双腕 (Bimanual) SO-101 (Leader x2 + Follower x2, 12 DoF) 設定
+project:
+  name: "pai2026_adv1_so101_bimanual"
+  omnicampus_id: "REPLACE_WITH_OMNICAMPUS_ID"
+  task_description: "Bimanual coordination: hold and stabilize the container with the left arm while picking and placing the target object into it with the right arm."
+
+robot:
+  type: "bi_so101_follower"
+  leader_type: "bi_so101_leader"
+  left_leader_port: "/dev/ttyACM0"     # 推奨: /dev/ttySO101_leader_left
+  left_follower_port: "/dev/ttyACM1"   # 推奨: /dev/ttySO101_follower_left
+  right_leader_port: "/dev/ttyACM2"    # 推奨: /dev/ttySO101_leader_right
+  right_follower_port: "/dev/ttyACM3"  # 推奨: /dev/ttySO101_follower_right
+  baudrate: 1000000
+  dof: 12
+
+cameras:
+  wrist_right:
+    index_or_path: "/dev/video0"
+    fps: 30
+    width: 640
+    height: 480
+  top:
+    index_or_path: "/dev/video2"
+    fps: 30
+    width: 640
+    height: 480
+  wrist_left:
+    index_or_path: "/dev/video4"
+    fps: 30
+    width: 640
+    height: 480
+
+dataset:
+  repo_id: "local/bi_so101_collaborative_pack"
+  root: "data/bi_so101_collaborative_pack"
+  fps: 30
+  num_episodes: 40
+  episode_time_s: 30
+  reset_time_s: 12
+  warmup_time_s: 3
+
+policy:
+  type: "act"
+  chunk_size: 16
+  n_action_steps: 1
+  temporal_ensemble_coeff: 0.01

@@ -1,0 +1,102 @@
+{
+  "project": {
+    "title": "SO-101 Active Wrist-Vision & Imitation Learning System",
+    "omnicampus_account_name": "cal29292929",
+    "omnicampus_account_id": "KfvZJ6",
+    "course": "Physical AI 応用1講座 (2026)"
+  },
+  "task": "Inspect objects with wrist camera at close range and sort into PASS (Tray A) and HOLD (Tray B)",
+  "total_steps": 432,
+  "episodes": [
+    {
+      "episode": 1,
+      "detection": {
+        "object_id": "target_01",
+        "label": "Red Precision Gear #A1 [Label: OK-2026]",
+        "category": "PASS",
+        "confidence": 0.96,
+        "bbox_norm": [
+          470.8,
+          284.4,
+          645.8,
+          434.4
+        ],
+        "pixel_uv": [
+          230,
+          268
+        ],
+        "reasoning": "Wrist-cam close-up verified intact gear teeth and QR tag 'OK-2026' -> Route to Tray A (PASS)."
+      },
+      "num_control_steps": 144,
+      "success": true,
+      "final_pose_deg": {
+        "shoulder_pan": 0.0,
+        "shoulder_lift": -25.0,
+        "elbow_flex": 45.0,
+        "wrist_flex": 65.0,
+        "wrist_roll": 0.0,
+        "gripper": 80.0
+      }
+    },
+    {
+      "episode": 2,
+      "detection": {
+        "object_id": "target_02",
+        "label": "Blue Sensor Module #B4 [Micro-Scratch Detected]",
+        "category": "HOLD",
+        "confidence": 0.94,
+        "bbox_norm": [
+          431.2,
+          543.8,
+          606.2,
+          693.8
+        ],
+        "pixel_uv": [
+          396,
+          249
+        ],
+        "reasoning": "Overhead view ambiguous; wrist-cam active approach at 8cm revealed surface scratch -> Route to Tray B (HOLD)."
+      },
+      "num_control_steps": 144,
+      "success": true,
+      "final_pose_deg": {
+        "shoulder_pan": 0.0,
+        "shoulder_lift": -25.0,
+        "elbow_flex": 45.0,
+        "wrist_flex": 65.0,
+        "wrist_roll": 0.0,
+        "gripper": 80.0
+      }
+    },
+    {
+      "episode": 3,
+      "detection": {
+        "object_id": "target_03",
+        "label": "Green Actuator Block #C2 [Label: OK-VERIFIED]",
+        "category": "PASS",
+        "confidence": 0.97,
+        "bbox_norm": [
+          512.5,
+          414.1,
+          687.5,
+          564.1
+        ],
+        "pixel_uv": [
+          313,
+          288
+        ],
+        "reasoning": "Wrist-cam close-up confirmed green anodized finish and alignment mark within 0.8mm tolerance -> Route to Tray A (PASS)."
+      },
+      "num_control_steps": 144,
+      "success": true,
+      "final_pose_deg": {
+        "shoulder_pan": 0.0,
+        "shoulder_lift": -25.0,
+        "elbow_flex": 45.0,
+        "wrist_flex": 65.0,
+        "wrist_roll": 0.0,
+        "gripper": 80.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+project:
+  title: SO-101 Active Wrist-Vision & Imitation Learning System
+  omnicampus_account_name: cal29292929
+  omnicampus_account_id: KfvZJ6
+  course: Physical AI 応用1講座 (2026)
+hardware:
+  mode: single_arm
+  arms:
+    follower_1:
+      robot_type: so101_follower
+      port: /dev/ttyACM0
+      baudrate: 1000000
+      calibration_id: so101_follower_unit1
+    leader_1:
+      robot_type: so101_leader
+      port: /dev/ttyACM1
+      baudrate: 1000000
+      calibration_id: so101_leader_unit1
+    follower_2:
+      enabled: false
+      robot_type: so101_follower
+      port: /dev/ttyACM2
+      baudrate: 1000000
+      calibration_id: so101_follower_unit2
+    leader_2:
+      enabled: false
+      robot_type: so101_leader
+      port: /dev/ttyACM3
+      baudrate: 1000000
+      calibration_id: so101_leader_unit2
+  cameras:
+    wrist_cam:
+      index_or_path: 0
+      width: 640
+      height: 480
+      fps: 30
+      mount: eye_in_hand
+    top_cam:
+      enabled: false
+      index_or_path: 1
+      width: 640
+      height: 480
+      fps: 30
+      mount: overhead_fixed
+safety:
+  control_hz: 30
+  max_delta_deg_per_step: 15.0
+  interpolation_steps: 20
+  joint_limits_deg:
+    shoulder_pan:
+    - -90.0
+    - 90.0
+    shoulder_lift:
+    - -85.0
+    - 85.0
+    elbow_flex:
+    - -95.0
+    - 95.0
+    wrist_flex:
+    - -90.0
+    - 90.0
+    wrist_roll:
+    - -120.0
+    - 120.0
+    gripper:
+    - 0.0
+    - 100.0
+poses_deg:
+  home_scan:
+    shoulder_pan: 0.0
+    shoulder_lift: -25.0
+    elbow_flex: 45.0
+    wrist_flex: 65.0
+    wrist_roll: 0.0
+    gripper: 80.0
+  tray_pass_drop:
+    shoulder_pan: 48.0
+    shoulder_lift: 10.0
+    elbow_flex: 35.0
+    wrist_flex: 40.0
+    wrist_roll: 0.0
+    gripper: 85.0
+  tray_hold_drop:
+    shoulder_pan: -48.0
+    shoulder_lift: 10.0
+    elbow_flex: 35.0
+    wrist_flex: 40.0
+    wrist_roll: 0.0
+    gripper: 85.0
+vlm_controller:
+  provider_priority:
+  - anthropic
+  - gemini
+  - openai
+  - heuristic_hsv
+  anthropic_model: claude-sonnet-4-5
+  gemini_model: gemini-2.5-pro
+  openai_model: gpt-4o
+  close_up_inspection_height_offset_deg: 18.0
+  confidence_threshold: 0.7
+lerobot_training:
+  dataset_repo_id: cal29292929/so101_active_wrist_sorting
+  policy_type: act
+  chunk_size: 50
+  n_action_steps: 50
+  training_steps: 20000
+  batch_size: 8
+  fps: 30
