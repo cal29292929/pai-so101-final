@@ -76,7 +76,7 @@ def main() -> None:
     for path in sorted(ROOT.rglob("*")):
         if not path.is_file():
             continue
-        if any(part in {".git", "__pycache__", ".pytest_cache", "outputs", "data"} for part in path.parts):
+        if any(part in {".git", ".venv", "__pycache__", ".pytest_cache", "outputs", "data"} for part in path.parts):
             continue
         if path.suffix.lower() in {".png", ".jpg", ".jpeg", ".mp4", ".pdf", ".npz", ".pt", ".safetensors"}:
             continue

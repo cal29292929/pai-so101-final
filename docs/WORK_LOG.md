@@ -168,4 +168,34 @@
   - codex_session=01a17ac9-2266-74f0-a596-6b9dd7fd85ca
   - pii_check=PASS
 
+### Log #8: SO-101 Unit 1 ハードウェア検出 (Windows ネイティブ環境)
+- **Timestamp**: `2026-10-29 09:29 JST`
+- **Category**: `hardware-test`
+- **Summary**: Leader/Follower 計12サーボの応答と手首カメラを確認。キャリブレーション・テレオペは実機前での対話操作待ち。
+- **Details**:
+  - 01_detect_hardware.py は Linux の /dev/tty* のみ走査するため Windows では 0 件検出（既知の制約）。
+  - lerobot 0.6.1 (feetech) + OpenCV を venv に導入し、STS3215 を読み取り専用で ping: COM7=12V 系(Follower)、COM8=5V 系(Leader)、各 ID1-6 応答・トルクOFF。
+  - lerobot-find-cameras で手首カメラを OpenCV index 2 (640x480@30fps) と特定。設定ファイルを COM7/COM8/index 2 に更新。
+  - check_no_pii.py の走査対象から .venv を除外（gitignore 済みの外部ライブラリによる誤検出のため）。
+  - 未実施: 02_calibrate_and_teleop.sh --mode calibrate / teleop（人手でアームを動かす必要あり）。
+- **Metrics / Artifacts**:
+  - servos=12/12 responded
+  - follower_volt=11.9V, leader_volt=4.9V
+  - wrist_cam=index2 640x480@30fps
+
+### Log #9: SO-101 Unit 1 キャリブレーション＆テレオペ動作確認 (Windows)
+- **Timestamp**: `2026-10-29 21:45 JST`
+- **Category**: `hardware-test`
+- **Summary**: Follower(COM7)/Leader(COM8) のキャリブレーションを完了し、手首カメラ付きテレオペで全関節・グリッパーの追従を確認。
+- **Details**:
+  - Windows では lerobot の可動域記録終了 Enter が msvcrt.kbhit() 依存でパイプ入力不可。enter_pressed をトリガファイル判定に差し替えるラッパーで回避。
+  - 失敗1: Follower 初回校正で shoulder_lift/elbow_flex が片側のみ記録 → テレオペで Follower が外側に行き過ぎ。中間姿勢を揃えて再校正し解消（lift 381-2827, elbow 921-3065）。
+  - 失敗2: Leader 校正時に中間姿勢を取っていたのが Follower 側で、Leader の値が 0-4095 にラップ。Leader 側を中間姿勢にして再校正し解消。
+  - 失敗3: wrist_roll は可動域記録対象外のため、両アームの『セット』時の手首向きの差（約67°）がそのままズレに。両アームの向きを揃えた状態で Follower の Homing_Offset を -1057→-1823 に補正し解消。
+  - テレオペ: max_relative_target=10° で起動時の急動作を抑制。60Hz ループ、wrist カメラ(index 2) 640x480@30fps 接続。
+- **Metrics / Artifacts**:
+  - calibration=leader+follower saved
+  - teleop_loop=60Hz
+  - wrist_roll_offset_fix=-766 ticks (-67.3deg)
+
 <!-- WORK_LOG_ENTRIES_END -->
