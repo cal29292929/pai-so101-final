@@ -17,6 +17,13 @@ from typing import Any
 import yaml
 
 
+def _port_sort_key(dev: str) -> tuple[str, int]:
+    """COM10 が COM7 より前に来ないよう、末尾の数字で自然順ソートする。"""
+    head = dev.rstrip("0123456789")
+    tail = dev[len(head):]
+    return (head, int(tail) if tail else -1)
+
+
 def scan_serial_ports() -> list[dict[str, Any]]:
     """OSに応じたSO-101用USBシリアルデバイスを列挙する。"""
     patterns = [
@@ -37,7 +44,11 @@ def scan_serial_ports() -> list[dict[str, Any]]:
     except Exception:
         port_map = {}
 
-    for dev in sorted(set(found)):
+    # Windows: /dev/* が存在しないため、pyserial が列挙した USB シリアル (COM*) を採用する
+    if platform.system() == "Windows":
+        found.extend(dev for dev, p in port_map.items() if getattr(p, "vid", None) is not None)
+
+    for dev in sorted(set(found), key=_port_sort_key):
         info = port_map.get(dev)
         results.append(
             {
@@ -110,7 +121,8 @@ def update_config_file(
         cams_cfg["top_cam"]["enabled"] = True
         cams_cfg["top_cam"]["index_or_path"] = cameras[1]["index"]
 
-    with config_path.open("w", encoding="utf-8") as f:
+    # Windows でも改行コードを LF のまま保つ（不要な差分を出さない）
+    with config_path.open("w", encoding="utf-8", newline="\n") as f:
         yaml.safe_dump(cfg, f, sort_keys=False, allow_unicode=True)
 
     return cfg
