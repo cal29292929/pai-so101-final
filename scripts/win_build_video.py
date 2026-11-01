@@ -242,8 +242,12 @@ def autonomous_section(b: Path, clip: Path | None, speed: float) -> Path:
     """セクション4。clipがあれば映像を使い、無ければ4秒のプレースホルダーカード。"""
     out = b / "seg_05_auto.mp4"
     if clip is None:
-        card = text_card(b / "auto.png", "4. AI自律動作（ACT推論）", ["AI自律動作の映像は撮影後に差し替え予定"], size=38)
-        return still_segment(card, 4, out)
+        card = text_card(b / "auto.png", "4. AI自律動作（ACT推論）", [
+            "学習済みACTでフォロワーを自律制御（推論 約0.4秒/チャンク）",
+            "結果: PCのメモリ不足で制御周期が約5秒/コマに低下し、把持に至らず",
+            "対策: 常駐アプリ停止・GPU環境で再評価し、映像を差し替え予定",
+        ], size=32)
+        return still_segment(card, 7, out)
     ov = overlay_png(b / "ov_4.png", "4. AI自律動作（ACT推論）", speed != 1.0)
     return clip_segment(clip, 0, probe_duration(clip), ov, speed, out)
 
