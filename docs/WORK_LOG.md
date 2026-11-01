@@ -198,4 +198,52 @@
   - teleop_loop=60Hz
   - wrist_roll_offset_fix=-766 ticks (-67.3deg)
 
+### Log #10: リポジトリ一本化（旧 pai-so101-final-project → pai-so101-final）と計画再設計
+- **Timestamp**: `2026-11-01 15:52 JST`
+- **Category**: `repo-ops`
+- **Summary**: 旧リポジトリの履歴・PR・Issue を照合し、旧側にしかない作業がないことを確認。新側の未マージ作業（キャットフード移し替えタスクの Windows スクリプト）を取り込み、残タスクを docs/PLAN.md に再整理した。
+- **Details**:
+  - 旧 main (c8dff1f) は新 main の祖先で、旧 PR #1/#2 の内容も新 main に含まれる。Issue 0 件。
+  - draft PR #1 (claude/catfood-pick-place) からスクリプト5本のみ取り込み。説明資料 PDF の差し替えは提出物凍結方針により持ち込まない。
+  - tests/test_catfood_pipeline.py を追加: max_relative_target ≤ 15°、ポート/キャリブレーションID/手首カメラ index と設定の一致、Hub・W&B へ送信しないこと、PDF 命名規則を静的に検証。
+  - README/CLAUDE.md/AGENTS.md の CI 定義パスを実配置 (ci/roboops_ci.yml) に修正し、キャットフードタスクの手順を追記。
+- **Metrics / Artifacts**:
+  - pytest=11 passed
+  - pii_check=PASS
+  - plan=docs/PLAN.md
+
+### Log #11: 自律動作の関節角上限と低速化（safe_rollout.py）
+- **Timestamp**: `2026-11-01 21:52 JST`
+- **Category**: `safety`
+- **Summary**: 配線の垂れによる可動域端での引っかかり対策として、ACT 自律動作の指令値を設定可動域の 0.8 倍にクリップし、1ステップの最大変化量を 10° から 5° に下げた。
+- **Details**:
+  - scripts/safe_rollout.py: lerobot-rollout を包み、SO-101 Follower の send_action 前に safety.joint_limits_deg × --limit-scale で関節指令をクリップ（gripper は対象外）。終了時に関節ごとのクリップ回数を表示。
+  - win_eval_catfood.ps1: safe_rollout.py 経由で起動し、-MaxRelTarget（既定 5）と -LimitScale（既定 0.8）を追加。
+  - クリップ後の上限: shoulder_pan ±72°, shoulder_lift ±68°, elbow_flex ±76°, wrist_flex ±72°, wrist_roll ±96°。
+  - 実機での動作確認は未実施（クラウド環境から実機 PC に接続できないため）。
+- **Metrics / Artifacts**:
+  - pytest=14 passed
+
+### Log #12: 低速ジョグ・ホーム姿勢保存スクリプト（win_jog_and_home.py）
+- **Timestamp**: `2026-11-01 21:53 JST`
+- **Category**: `safety`
+- **Summary**: 皿に接触した姿勢から、肩・肘だけでゆっくり持ち上げ、青皿の真上でホーム姿勢として保存し、自律動作をそこから始めるためのスクリプトを追加。
+- **Details**:
+  - 指定関節のみ動かし他関節は保持、8 deg/s の線形補間、安全上限（可動域×0.8）でクリップ、移動前に計画を1行表示して Enter で確認、終了時もトルク保持。
+  - win_eval_catfood.ps1 は configs/home_pose_catfood.yaml があれば最初にホームへ戻ってから rollout する。
+  - 実機での動作確認は未実施。
+
+### Log #13: 自律動作の安全機構: ホーム2段階復帰・EMA平滑化・高さ下限・停止検知
+- **Timestamp**: `2026-11-01 22:01 JST`
+- **Category**: `safety`
+- **Summary**: 実機観察（開始姿勢がキブル内、リセット位置が赤皿の右上、把持のぎくしゃくと皿への接触、エピソード中の30秒停止）を受けて、safe_rollout.py に4つの対策を追加。
+- **Details**:
+  - ホーム復帰: lerobot-rollout の起動時姿勢への復帰を置き換え、開始・リセット・終了時に shoulder_lift/elbow_flex だけで持ち上げてから pan などを動かし、home_pose_catfood.yaml（青皿の真上）へ移動。終了後もトルク保持。
+  - 平滑化: ポリシー出力に EMA（既定 alpha=0.3）を適用し、エピソード開始時は現在姿勢から始める。
+  - 高さ下限: floor_pose_catfood.yaml（皿の底すれすれで --save-floor）より下がる側へ shoulder_lift/elbow_flex を行かせない。関節ごとの近似で順運動学ではない。
+  - 停止検知: 全関節の変化が 1° 未満のまま 4 秒続いたらエピソードを打ち切り、リセット時のホーム復帰へ。
+  - lerobot をスタブ化したテスト（tests/test_safe_rollout.py, 7件）で、持ち上げ中に pan が動かないこと、フロアを越えないこと、停止時に打ち切ることを確認。実機での確認は未実施。
+- **Metrics / Artifacts**:
+  - pytest=22 passed (+1 known git-log PII finding on main)
+
 <!-- WORK_LOG_ENTRIES_END -->

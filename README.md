@@ -66,7 +66,11 @@
 | `scripts/04_record_and_train_policy.sh` | テレオペデータ収集・RoboOps データセット検証・ACT/SmolVLA 学習スクリプト |
 | `scripts/05_build_video_and_report.py` | 提出用 1〜3分動画（HUD・倍速明記）および説明資料 PDF 自動ビルド |
 | `tests/test_roboops_pipeline.py` | RoboOps データセット品質検証・安全可動域・設定契約のユニットテスト |
-| `.github/workflows/roboops_ci.yml` | GitHub Actions による自動テスト・データセット検証 CI |
+| `scripts/win_record_catfood.ps1` / `win_train_catfood.ps1` / `win_eval_catfood.ps1` | キャットフード移し替えタスク（Windows 実機）: テレオペ収録・ACT学習・自律評価 |
+| `scripts/win_build_video.py` / `win_build_report.py` | キャットフードタスク版 提出動画・説明資料の組み立て（Windows / ffmpeg + Pillow） |
+| `tests/test_catfood_pipeline.py` | キャットフードタスク用スクリプトの安全制限・設定整合テスト |
+| `ci/roboops_ci.yml` | 自動テスト・データセット検証 CI 定義（`.github/workflows/` へ配置すると GitHub Actions で有効化） |
+| `docs/PLAN.md` | 残タスクと実行計画 |
 
 ---
 
@@ -114,6 +118,20 @@ pytest -q
 
 # データ収集 → 検証 → ACT学習 → 評価の一括実行
 bash scripts/04_record_and_train_policy.sh --step validate
+```
+
+### 4.4b 実機タスク: キャットフード移し替え（青皿 → 赤皿, Windows / lerobot 0.6.1）
+
+Follower=COM7 / Leader=COM8 / 手首カメラ=OpenCV index 2（`configs/so101_task_config.yaml` と一致することを `tests/test_catfood_pipeline.py` で検証）。
+Follower への目標角変化は `--robot.max_relative_target=10`（安全規約 15° 以下）。
+
+```powershell
+# 1) テレオペで手本を収録（既定 15 エピソード、-Resume で追記）
+powershell -File scripts\win_record_catfood.ps1 -Episodes 15
+# 2) ACT を CPU で学習
+powershell -File scripts\win_train_catfood.ps1 -Steps 6000
+# 3) 学習済みポリシーで自律動作・評価エピソードを記録
+powershell -File scripts\win_eval_catfood.ps1 -Episodes 3
 ```
 
 ### 4.5 提出用動画（MP4）と説明資料（PDF）の生成

@@ -85,13 +85,17 @@ Claude Code (`claude`) および OpenAI Codex (`codex`) は、このドキュメ
 │   ├── 04_record_and_train_policy.sh     # Phase 2: LeRobot データ収集・RoboOps検証・ACT/SmolVLA学習
 │   ├── 05_vlm_hierarchical_eval.py       # VLM把持判定＋失敗リカバリ統合評価
 │   ├── 05_build_video_and_report.py      # 公式OP/ED統合 1〜3分提出動画＆説明資料PDF自動生成
+│   ├── win_*_catfood.ps1                 # キャットフード移し替えタスク: 収録・ACT学習・自律評価（Windows 実機）
+│   ├── win_build_video.py / win_build_report.py # キャットフードタスク版 動画・説明資料の組み立て（Windows）
 │   ├── log_work.py                       # 作業報告ログ(docs/WORK_LOG.md)追記＆PDF再生成ツール
 │   └── check_no_pii.py                   # 個人情報ゼロ(Zero-PII)自動検査スクリプト
 ├── tests/
-│   └── test_roboops_pipeline.py          # Day1-2 RoboOps 準拠のデータ契約・設定・安全性・PIIテスト
-├── .github/workflows/
-│   └── roboops_ci.yml                    # GitHub Actions 自動検証パイプライン
+│   ├── test_roboops_pipeline.py          # Day1-2 RoboOps 準拠のデータ契約・設定・安全性・PIIテスト
+│   └── test_catfood_pipeline.py          # キャットフードタスク用スクリプトの安全制限・設定整合テスト
+├── ci/
+│   └── roboops_ci.yml                    # 自動検証パイプライン定義（.github/workflows/ へ配置で GitHub Actions 有効化）
 └── docs/
+    ├── PLAN.md                           # 残タスクと実行計画（リポジトリ一本化後）
     ├── FINAL_PROJECT_MASTER_GUIDE.md     # 最終課題ルール・提出手順・Slack情報まとめ
     └── WORK_LOG.md                       # 優秀生選出用 作業報告・実験・失敗分析ログ（レポートPDF原稿）
 ```
