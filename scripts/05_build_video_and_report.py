@@ -297,7 +297,7 @@ def build_pdf_report(
     story.append(Spacer(1, 2 * mm))
     story.append(
         Paragraph(
-            "※提出動画（公式OP/ED・スライドテンプレート統合版、約1分15秒、等倍1.0x明記）およびGitHubリポジトリにて全コード・RoboOps CIテスト・作業報告ログを公開（個人情報一切なし）。",
+            "※提出動画（公式OP/ED・スライドテンプレート統合版、約1分15秒、等倍1.0x明記）およびGitHubリポジトリにて全コード・RoboOps CIテスト・作業報告ログを公開（個人情報一切なし）。<br/>GitHub: https://github.com/cal29292929/pai-so101-final",
             sub_style,
         )
     )
@@ -372,6 +372,7 @@ def render_official_slide_frame(
                     "・Day 3  : USBホストコントローラ帯域確認 & udev シリアル番号固定によるデバイス保護",
                     "・Day 4-5: 1ステップ最大15.0°補間、wrist_roll [-120°,+120°] ケーブル保護、GT対予測MSE診断",
                     "・Day 6  : OSHW SO-101 活用 & 再現可能な公開GitHubリポジトリによるOSS還元",
+                    "・GitHub: github.com/cal29292929/pai-so101-final",
                 ],
                 (251, 191, 36, 255),
             ),

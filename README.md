@@ -128,6 +128,23 @@ python3 scripts/05_build_video_and_report.py --omnicampus-id cal29292929
 
 ---
 
+## カメラモニタリング（撮影・監視構成）
+
+実験中の挙動確認とデモ映像素材のため、以下の3視点で SO-101 を記録・監視する。
+
+| 視点 | 用途 | 取得方法 |
+|---|---|---|
+| 手首カメラ（Wrist cam, USB UVC） | Eye-in-Hand 近接検査・VLM入力 | `scripts/06_record_cameras.py` |
+| PC内蔵カメラ（Integrated Camera） | 作業台の正面俯瞰・記録 | `scripts/06_record_cameras.py` |
+| Ring camera ライブビュー | 外部からの安全監視ビュー（制御には未使用） | Ring Web ダッシュボードで閲覧 |
+
+```bash
+# デバイス一覧
+python scripts/06_record_cameras.py --list
+# 手首カメラ＋PC内蔵カメラを同時録画（Ctrl+Cで停止）→ outputs/recordings/<name>_YYYYmmdd_HHMMSS.mp4
+python scripts/06_record_cameras.py
+```
+
 ## 5. ライセンス
 
 Apache License 2.0
