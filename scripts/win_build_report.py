@@ -267,13 +267,13 @@ def p7_result(a):
     d.text((80, 180), "AI自律動作の評価", font=font(34, True), fill=ACCENT_D)
     rt = a.result_text.replace("\\n", "\n")
     tw = 1760 if not a.result_image else 1000
-    d.rounded_rectangle((80, 236, 80 + tw, 460), radius=18, fill=PANEL, outline=ACCENT_D, width=3)
-    text_block(d, (110, 256), rt, 32, INK, tw - 60)
+    d.rounded_rectangle((80, 236, 80 + tw, 640), radius=18, fill=PANEL, outline=ACCENT_D, width=3)
+    text_block(d, (110, 256), rt, 28, INK, tw - 60)
     if a.result_image and Path(a.result_image).exists():
-        r = fit_image(Path(a.result_image), 700, 360)
+        r = fit_image(Path(a.result_image), 700, 400)
         im.paste(r, (1120, 236))
-    d.text((80, 500), "考察", font=font(34, True), fill=ACCENT_D)
-    bullets(d, 80, 556, [
+    d.text((80, 680), "考察", font=font(34, True), fill=ACCENT_D)
+    bullets(d, 80, 736, [
         "主なボトルネックは学習ステップ不足(約0.27エポック相当)とCPU制約。",
         "粒状の対象は把持量がばらつき、成否の判定も難しい。",
         "損失は低下しているが、収束とは言えない段階で、評価は定性的になる見込み。",
