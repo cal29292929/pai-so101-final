@@ -212,4 +212,25 @@
   - pii_check=PASS
   - plan=docs/PLAN.md
 
+### Log #11: 自律動作の関節角上限と低速化（safe_rollout.py）
+- **Timestamp**: `2026-11-01 21:52 JST`
+- **Category**: `safety`
+- **Summary**: 配線の垂れによる可動域端での引っかかり対策として、ACT 自律動作の指令値を設定可動域の 0.8 倍にクリップし、1ステップの最大変化量を 10° から 5° に下げた。
+- **Details**:
+  - scripts/safe_rollout.py: lerobot-rollout を包み、SO-101 Follower の send_action 前に safety.joint_limits_deg × --limit-scale で関節指令をクリップ（gripper は対象外）。終了時に関節ごとのクリップ回数を表示。
+  - win_eval_catfood.ps1: safe_rollout.py 経由で起動し、-MaxRelTarget（既定 5）と -LimitScale（既定 0.8）を追加。
+  - クリップ後の上限: shoulder_pan ±72°, shoulder_lift ±68°, elbow_flex ±76°, wrist_flex ±72°, wrist_roll ±96°。
+  - 実機での動作確認は未実施（クラウド環境から実機 PC に接続できないため）。
+- **Metrics / Artifacts**:
+  - pytest=14 passed
+
+### Log #12: 低速ジョグ・ホーム姿勢保存スクリプト（win_jog_and_home.py）
+- **Timestamp**: `2026-11-01 21:53 JST`
+- **Category**: `safety`
+- **Summary**: 皿に接触した姿勢から、肩・肘だけでゆっくり持ち上げ、青皿の真上でホーム姿勢として保存し、自律動作をそこから始めるためのスクリプトを追加。
+- **Details**:
+  - 指定関節のみ動かし他関節は保持、8 deg/s の線形補間、安全上限（可動域×0.8）でクリップ、移動前に計画を1行表示して Enter で確認、終了時もトルク保持。
+  - win_eval_catfood.ps1 は configs/home_pose_catfood.yaml があれば最初にホームへ戻ってから rollout する。
+  - 実機での動作確認は未実施。
+
 <!-- WORK_LOG_ENTRIES_END -->
