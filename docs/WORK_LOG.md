@@ -198,4 +198,18 @@
   - teleop_loop=60Hz
   - wrist_roll_offset_fix=-766 ticks (-67.3deg)
 
+### Log #10: リポジトリ一本化（旧 pai-so101-final-project → pai-so101-final）と計画再設計
+- **Timestamp**: `2026-11-01 15:52 JST`
+- **Category**: `repo-ops`
+- **Summary**: 旧リポジトリの履歴・PR・Issue を照合し、旧側にしかない作業がないことを確認。新側の未マージ作業（キャットフード移し替えタスクの Windows スクリプト）を取り込み、残タスクを docs/PLAN.md に再整理した。
+- **Details**:
+  - 旧 main (c8dff1f) は新 main の祖先で、旧 PR #1/#2 の内容も新 main に含まれる。Issue 0 件。
+  - draft PR #1 (claude/catfood-pick-place) からスクリプト5本のみ取り込み。説明資料 PDF の差し替えは提出物凍結方針により持ち込まない。
+  - tests/test_catfood_pipeline.py を追加: max_relative_target ≤ 15°、ポート/キャリブレーションID/手首カメラ index と設定の一致、Hub・W&B へ送信しないこと、PDF 命名規則を静的に検証。
+  - README/CLAUDE.md/AGENTS.md の CI 定義パスを実配置 (ci/roboops_ci.yml) に修正し、キャットフードタスクの手順を追記。
+- **Metrics / Artifacts**:
+  - pytest=11 passed
+  - pii_check=PASS
+  - plan=docs/PLAN.md
+
 <!-- WORK_LOG_ENTRIES_END -->
