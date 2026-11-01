@@ -114,7 +114,7 @@
 ### Log #4: RoboOps CI パイプライン統合・個人情報ゼロ検査（Zero-PII）・GitHub リポジトリ構築
 - **Timestamp**: `2026-10-27 07:20 JST`
 - **Category**: `roboops-ci`
-- **Summary**: 2つの開発ワークスペースを `/workspace/pai_final_project/` に完全統合し、作業ログ自動記録スクリプト `scripts/log_work.py`、個人情報ゼロ検査 `scripts/check_no_pii.py`、および GitHub Actions CI を整備して非公開 GitHub リポジトリ `cal29292929/pai-so101-final-project` を作成。
+- **Summary**: 2つの開発ワークスペースを `/workspace/pai_final_project/` に完全統合し、作業ログ自動記録スクリプト `scripts/log_work.py`、個人情報ゼロ検査 `scripts/check_no_pii.py`、および GitHub Actions CI を整備して非公開 GitHub リポジトリ `cal29292929/pai-so101-final` を作成。
 - **Details**:
   - `git config user.name "cal29292929"` および `git config user.email "cal29292929@users.noreply.github.com"` を設定し、コミット履歴への個人名・個人メールアドレス混入を完全防止。
   - `python3 scripts/check_no_pii.py` により、リポジトリ内の全テキストファイルおよび `git log` にメールアドレス・電話番号・個人名ローカルパス・禁止属性ワードが含まれないことを自動検査（`RESULT: PASS`）。
@@ -162,7 +162,7 @@
 - **Details**:
   - CLAUDE.md を最新化（公式OP/EDテンプレート、優秀生選出規定、作業ログ記録フロー統合）し、同一内容の AGENTS.md を作成して Codex CLI が起動時に自動認識するよう構成
   - Claude Code セッション (PAI最終課題_SO101, Remote Control有効) および Codex セッション (GPT-6-Luna, Remote Control Daemon有効) を tmux 永続セッション (pai-claude / pai-codex) 上に立ち上げ、初期コンテキストの読み込み完了を確認
-  - check_no_pii.py および pytest 全6テストのPASSを確認し、GitHub (cal29292929/pai-so101-final-project) へPush完了
+  - check_no_pii.py および pytest 全6テストのPASSを確認し、GitHub (cal29292929/pai-so101-final) へPush完了
 - **Metrics / Artifacts**:
   - claude_session=PAI最終課題_SO101
   - codex_session=01a17ac9-2266-74f0-a596-6b9dd7fd85ca
