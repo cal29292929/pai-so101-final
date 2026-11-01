@@ -51,7 +51,14 @@ def test_robot_scripts_match_hardware_config():
         text = _read(name)
         assert f"--robot.port={follower['port']}" in text, f"{name}: follower port mismatch"
         assert f"--robot.id={follower['calibration_id']}" in text, f"{name}: follower calibration id mismatch"
-        assert f"index_or_path: {wrist_idx}" in text, f"{name}: wrist camera index mismatch"
+        m = re.search(r"index_or_path: (\$?\w+)", text)
+        assert m, f"{name}: wrist camera index not set"
+        idx = m.group(1)
+        if idx.startswith("$"):  # parameterized: the param default must match the config
+            d = re.search(r"\[int\]%s\s*=\s*(\d+)" % re.escape(idx), text)
+            assert d, f"{name}: no default for {idx}"
+            idx = d.group(1)
+        assert idx == str(wrist_idx), f"{name}: wrist camera index {idx} != config {wrist_idx}"
     rec = _read("win_record_catfood.ps1")
     assert f"--teleop.port={leader['port']}" in rec
     assert f"--teleop.id={leader['calibration_id']}" in rec

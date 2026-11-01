@@ -14,11 +14,11 @@
 | 旧 PR #1 / #2（マージ済み） | 内容はすべて新リポジトリ `main` に取り込み済み（ポートの COM7/COM8 化、Log #8・#9、`.venv` の PII 走査除外） |
 | 旧リポジトリの Issue / TODO | Issue 0 件。コード・docs に未着手の TODO はない |
 | 旧セッション「PAI最終課題_SO101」 | 会話記録は信頼済み端末からしか読めないため、このセッションからは参照していない。作業の痕跡（Log #7〜#9）はリポジトリ側で確認済み |
-| 新リポジトリの未マージ作業 | draft PR #1 `claude/catfood-pick-place`: キャットフード移し替えタスクの Windows スクリプト5本 → **スクリプトのみ取り込み**。同じ PR に入っている説明資料 PDF の差し替え（仮版）は、提出物を変えない方針に従って持ち込んでいない |
+| 新リポジトリの未マージ作業 | PR #1 `claude/catfood-pick-place`（キャットフード移し替えタスク）と PR #3（`lerobot-rollout` による ACT 自律動作・結果反映）は、その後 main にマージ済み。本ブランチは main を取り込み、スクリプトは main の版を採用 |
 
 ## 2. 提出物の凍結ルール
 
-- 提出用の説明資料 PDF（`outputs/説明資料_PAI最終課題_cal29292929.pdf`）と提出動画は**このリポジトリ作業では変更しない**。
+- 提出用の説明資料 PDF（`outputs/説明資料_PAI最終課題_cal29292929.pdf`、PR #3 時点の main の版）と提出動画は**このリポジトリ作業では変更しない**。
 - そのため `scripts/log_work.py` の `--rebuild-report` と `scripts/05_build_video_and_report.py` / `win_build_*.py` の出力をコミットしない。
 - 作業ログは `python3 scripts/log_work.py --title ... --summary ...`（`--rebuild-report` なし）で追記する。
 
@@ -29,7 +29,7 @@
 | # | タスク | 状態 |
 |---|---|---|
 | R1 | 旧リポジトリとの差分調査・一本化 | 完了 |
-| R2 | キャットフードタスク用スクリプトの取り込み（`scripts/win_*`） | 完了 |
+| R2 | キャットフードタスク用スクリプトの取り込み（`scripts/win_*`、main の PR #1/#3 版に統一） | 完了 |
 | R3 | スクリプトの安全制限・設定整合テストの追加（`tests/test_catfood_pipeline.py`: max_relative_target ≤ 15°、COM ポート・キャリブレーション ID・手首カメラ index が設定と一致、Hub/W&B へ送信しない、PDF 命名規則） | 完了 |
 | R4 | README / CLAUDE.md / AGENTS.md の整合（CI 定義の実際の場所 `ci/roboops_ci.yml`、キャットフードタスクの手順） | 完了 |
 | R5 | 作業ログ追記（Log #10: 一本化と計画再設計） | 完了 |
@@ -39,16 +39,17 @@
 
 | # | タスク | 備考 |
 |---|---|---|
-| H1 | 作業ブランチの PR をマージし、旧 draft PR #1 (`claude/catfood-pick-place`) を閉じる | PR #1 の PDF 差し替えを採用する場合は、内容を確認してから別途判断 |
+| H1 | 一本化 PR #2（テスト・PLAN・ドキュメント整合）をマージ | PR #1/#3 はマージ済み |
 | H2 | リポジトリが **Public** で閲覧できることをシークレットウィンドウで確認 | CLAUDE.md の公開予定日は 2026-11-01 |
 | H3 | 旧リポジトリ `pai-so101-final-project` をアーカイブ（Settings → Archive） | 非公開のまま。以後は使わない |
 | H4 | （任意）`ci/roboops_ci.yml` を `.github/workflows/` に移して GitHub Actions を有効化 | workflow 権限のあるトークンが必要 |
 | H5 | YouTube: タイトル `PAI最終課題_cal29292929`、限定公開以上、1〜3分、倍速使用時は明記 | `SUBMISSION_CHECKLIST.md` §4 |
 | H6 | Omnicampus の2箇所に PDF・GitHub URL・YouTube URL を提出 | 締切 11/02 10:00 JST |
-| H7 | （提出後・任意）ACT 自律動作の追加評価 `win_eval_catfood.ps1` と結果の作業ログ記録 | 提出物は差し替えない。記録のみ |
+| H7 | ACT 自律動作（PR #3 で実施）の結果を `log_work.py` で作業ログに記録。提出後は常駐アプリ停止・GPU 環境で再評価 | 提出物は差し替えない。記録のみ |
 
 ## 4. 実機パイプライン（キャットフード移し替え）の現状
 
 - データ: テレオペ 30 エピソード（約 17,900 フレーム、手首カメラ 640x480@30fps）
 - 学習: LeRobot ACT（CPU、1000 steps まで実施）
+- 自律動作: `lerobot-rollout`（episodic）で実施済み（PR #3）。`win_eval_catfood.ps1` は手首カメラ index を `-WristCam` で切替可能
 - 次の改善候補（提出後）: GPU での追加学習（6000 steps 以上）、自律動作の成功率評価、データ拡充
