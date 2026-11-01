@@ -132,4 +132,4 @@ python3 scripts/check_no_pii.py && pytest -q
 ## 6. Work Log & Git Workflow (`docs/WORK_LOG.md` & `scripts/log_work.py`)
 - **Every significant milestone, hardware test, dataset recording, policy training run, or troubleshooting finding MUST be logged to `docs/WORK_LOG.md`** using `python3 scripts/log_work.py` so the final report (`outputs/説明資料_PAI最終課題_cal29292929.pdf`) automatically reflects the complete engineering trail and failure/recovery analysis (which is explicitly evaluated for the Excellence Award / 優秀生選出).
 - **Git Config Policy**: Always ensure `git config user.name "cal29292929"` and `git config user.email "cal29292929@users.noreply.github.com"`. Run `python3 scripts/check_no_pii.py` before every commit/push.
-- **Repository Visibility Policy**: Keep `https://github.com/cal29292929/pai-so101-final-project` **Private** during active development, and switch to **Public** on **2026-11-01** (before the 2026-11-02 10:00 JST deadline).
+- **Repository Visibility Policy**: Keep `https://github.com/cal29292929/pai-so101-final` **Private** during active development, and switch to **Public** on **2026-11-01** (before the 2026-11-02 10:00 JST deadline).

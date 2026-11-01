@@ -17,5 +17,5 @@ weblab.t.u-tokyo.ac.jp/lecture/course-list/physical-ai/advanced1
   1. 俯瞰スキャンで候補ワークピースの位置を特定後、手首カメラを対象物直上8cmへ接近させて高解像度な近接外観検査を実行
   2. Multi-Modal VLM による微細傷・QRラベル検査と、安全角度制限付きIK / LeRobot (ACT・SmolVLA) による良品(Tray A)・要確認品(Tray B)への自律仕分け
   3. 第1〜6回講義の技術（RoboOps自動テストCI、USB帯域確認・udev固定、最大関節ステップ補間、GT対予測MSE診断）を統合
-・GitHub リポジトリ: https://github.com/cal29292929/pai-so101-final-project
+・GitHub リポジトリ: https://github.com/cal29292929/pai-so101-final
 （※規定に基づき、動画・コード・説明資料に個人情報は一切含めておりません）
