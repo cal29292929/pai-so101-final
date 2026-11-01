@@ -14,28 +14,30 @@
   .venv\\Scripts\\python.exe scripts\\win_jog_and_home.py --move shoulder_pan=15
   .venv\\Scripts\\python.exe scripts\\win_jog_and_home.py --save-home
   .venv\\Scripts\\python.exe scripts\\win_jog_and_home.py --goto-home
+  .venv\\Scripts\\python.exe scripts\\win_jog_and_home.py --save-floor   # 皿の底すれすれで実行（高さ下限）
+
+--goto-home は safe_rollout.py と同じ2段階（①shoulder_lift/elbow_flex だけで持ち上げ ②pan など残り）で動く。
 """
 from __future__ import annotations
 
 import argparse
 import importlib.util
 import sys
-import time
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 CFG = ROOT / "configs" / "so101_task_config.yaml"
-HOME_FILE = ROOT / "configs" / "home_pose_catfood.yaml"
-JOINTS = ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper"]
+
+_spec = importlib.util.spec_from_file_location("safe_rollout", ROOT / "scripts" / "safe_rollout.py")
+sr = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(sr)
+HOME_FILE, FLOOR_FILE, JOINTS, interpolate = sr.HOME_FILE, sr.FLOOR_FILE, sr.JOINTS, sr.interpolate
 
 
 def _load_limits(scale: float) -> dict[str, tuple[float, float]]:
-    spec = importlib.util.spec_from_file_location("safe_rollout", ROOT / "scripts" / "safe_rollout.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod.load_limits(CFG, scale)
+    return sr.load_limits(CFG, scale)
 
 
 def plan_targets(current: dict[str, float], requested: dict[str, float],
@@ -49,15 +51,6 @@ def plan_targets(current: dict[str, float], requested: dict[str, float],
         lo, hi = limits[j]
         target[j] = min(max(float(v), lo), hi)
     return target
-
-
-def interpolate(start: dict[str, float], goal: dict[str, float], speed_deg_s: float, hz: float):
-    """最大変化量の関節が speed_deg_s になるよう、start→goal の中間姿勢を順に返す。"""
-    span = max(abs(goal[j] - start[j]) for j in start)
-    n = max(1, int(span / speed_deg_s * hz) + 1)
-    for i in range(1, n + 1):
-        a = i / n
-        yield {j: start[j] + (goal[j] - start[j]) * a for j in start}
 
 
 def _parse_moves(items: list[str]) -> dict[str, float]:
@@ -95,7 +88,8 @@ def main() -> None:
     g.add_argument("--show", action="store_true", help="現在の関節角を表示するだけ")
     g.add_argument("--move", nargs="+", metavar="JOINT=DEG", help="指定関節だけを目標値へ動かす")
     g.add_argument("--save-home", action="store_true", help=f"現在姿勢を {HOME_FILE.name} に保存")
-    g.add_argument("--goto-home", action="store_true", help="保存したホーム姿勢へ戻る")
+    g.add_argument("--goto-home", action="store_true", help="保存したホーム姿勢へ戻る（持ち上げ→pan の2段階）")
+    g.add_argument("--save-floor", action="store_true", help=f"現在姿勢を高さ下限として {FLOOR_FILE.name} に保存")
     ap.add_argument("--speed", type=float, default=8.0, help="最大関節速度 deg/s（既定 8）")
     ap.add_argument("--hz", type=float, default=20.0)
     ap.add_argument("--limit-scale", type=float, default=0.8)
@@ -110,28 +104,28 @@ def main() -> None:
         if args.show:
             print("current: " + ", ".join(f"{j}={cur[j]:.1f}" for j in JOINTS))
             return
-        if args.save_home:
-            HOME_FILE.write_text(yaml.safe_dump({"home_deg": {j: round(cur[j], 1) for j in JOINTS}},
-                                                sort_keys=False), encoding="utf-8")
-            print(f"saved home to {HOME_FILE.relative_to(ROOT)}: " + ", ".join(f"{j}={cur[j]:.1f}" for j in JOINTS))
+        if args.save_home or args.save_floor:
+            path, key = (HOME_FILE, "home_deg") if args.save_home else (FLOOR_FILE, "floor_deg")
+            path.write_text(yaml.safe_dump({key: {j: round(cur[j], 1) for j in JOINTS}}, sort_keys=False),
+                            encoding="utf-8")
+            print(f"saved {key} to {path.relative_to(ROOT)}: " + ", ".join(f"{j}={cur[j]:.1f}" for j in JOINTS))
             return
+        limits = _load_limits(args.limit_scale)
         if args.goto_home:
-            if not HOME_FILE.exists():
+            home = sr.load_pose(HOME_FILE, "home_deg")
+            if home is None:
                 sys.exit(f"{HOME_FILE.relative_to(ROOT)} not found: run --save-home first")
-            requested = yaml.safe_load(HOME_FILE.read_text(encoding="utf-8"))["home_deg"]
+            phases = [plan_targets(cur, {j: p[j] for j in JOINTS}, limits) for p in sr.home_phases(cur, home)]
         else:
-            requested = _parse_moves(args.move)
-        target = plan_targets(cur, requested, _load_limits(args.limit_scale))
-        print(f"plan ({args.speed:.0f} deg/s): {_fmt(cur, target)}")
+            phases = [plan_targets(cur, _parse_moves(args.move), limits)]
+        prev = cur
+        for i, ph in enumerate(phases, 1):
+            print(f"plan {i}/{len(phases)} ({args.speed:.0f} deg/s): {_fmt(prev, ph)}")
+            prev = ph
         if not args.yes and input("Enter で実行 / それ以外で中止: ").strip():
             print("aborted")
             return
-        period = 1.0 / args.hz
-        for step in interpolate(cur, target, args.speed, args.hz):
-            t0 = time.perf_counter()
-            robot.send_action({f"{j}.pos": v for j, v in step.items()})
-            time.sleep(max(0.0, period - (time.perf_counter() - t0)))
-        time.sleep(0.5)
+        sr.move_via(robot.send_action, lambda: _read(robot), phases, args.speed, args.hz)
         print("reached: " + ", ".join(f"{j}={v:.1f}" for j, v in _read(robot).items()))
     finally:
         robot.disconnect()  # torque stays enabled (disable_torque_on_disconnect=False)

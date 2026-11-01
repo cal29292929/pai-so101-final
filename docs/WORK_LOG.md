@@ -233,4 +233,17 @@
   - win_eval_catfood.ps1 は configs/home_pose_catfood.yaml があれば最初にホームへ戻ってから rollout する。
   - 実機での動作確認は未実施。
 
+### Log #13: 自律動作の安全機構: ホーム2段階復帰・EMA平滑化・高さ下限・停止検知
+- **Timestamp**: `2026-11-01 22:01 JST`
+- **Category**: `safety`
+- **Summary**: 実機観察（開始姿勢がキブル内、リセット位置が赤皿の右上、把持のぎくしゃくと皿への接触、エピソード中の30秒停止）を受けて、safe_rollout.py に4つの対策を追加。
+- **Details**:
+  - ホーム復帰: lerobot-rollout の起動時姿勢への復帰を置き換え、開始・リセット・終了時に shoulder_lift/elbow_flex だけで持ち上げてから pan などを動かし、home_pose_catfood.yaml（青皿の真上）へ移動。終了後もトルク保持。
+  - 平滑化: ポリシー出力に EMA（既定 alpha=0.3）を適用し、エピソード開始時は現在姿勢から始める。
+  - 高さ下限: floor_pose_catfood.yaml（皿の底すれすれで --save-floor）より下がる側へ shoulder_lift/elbow_flex を行かせない。関節ごとの近似で順運動学ではない。
+  - 停止検知: 全関節の変化が 1° 未満のまま 4 秒続いたらエピソードを打ち切り、リセット時のホーム復帰へ。
+  - lerobot をスタブ化したテスト（tests/test_safe_rollout.py, 7件）で、持ち上げ中に pan が動かないこと、フロアを越えないこと、停止時に打ち切ることを確認。実機での確認は未実施。
+- **Metrics / Artifacts**:
+  - pytest=22 passed (+1 known git-log PII finding on main)
+
 <!-- WORK_LOG_ENTRIES_END -->

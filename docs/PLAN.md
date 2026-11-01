@@ -53,3 +53,15 @@
 - 学習: LeRobot ACT（CPU、1000 steps まで実施）
 - 自律動作: `lerobot-rollout`（episodic）で実施済み（PR #3）。`win_eval_catfood.ps1` は手首カメラ index を `-WristCam` で切替可能
 - 次の改善候補（提出後）: GPU での追加学習（6000 steps 以上）、自律動作の成功率評価、データ拡充
+
+## 5. 自律動作の安全機構（`scripts/safe_rollout.py`、実機未検証）
+
+実機観察（開始姿勢が赤皿のキブル内／リセット位置が赤皿の右上／把持がぎくしゃくして皿の底・縁に接触／エピソード2で30秒停止）への対策:
+
+| 対策 | 内容 | 主な引数 |
+|---|---|---|
+| ホーム復帰 | 開始時・各リセット時・終了時に `configs/home_pose_catfood.yaml`（青皿の真上）へ。①shoulder_lift/elbow_flex だけで持ち上げ → ②pan 等。終了後もトルク保持 | `--home-speed` 8 deg/s |
+| 平滑化 | ポリシー出力に指数移動平均。エピソード開始時は現在姿勢から始める | `-EmaAlpha` 0.3 |
+| 高さ下限 | `configs/floor_pose_catfood.yaml`（皿の底すれすれ）より下がる側へ shoulder_lift/elbow_flex を行かせない（関節ごとの近似） | `--save-floor` で記録 |
+| 停止検知 | 全関節の変化 1° 未満が 4 秒続いたらエピソード打ち切り → ホーム復帰 | `-StallSec` 4 |
+| 速度・可動域 | 1ステップ最大 5°、関節角は設定可動域の 0.8 倍 | `-MaxRelTarget` 5 / `-LimitScale` 0.8 |
