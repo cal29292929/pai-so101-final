@@ -5,7 +5,7 @@ param(
     [int]$EpisodeSec = 25,
     [int]$ResetSec = 10,
     [string]$Checkpoint = "last",
-    [int]$WristCam = 2
+    [int]$WristCam = 1
 )
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
@@ -15,9 +15,13 @@ $policy = Join-Path $run.FullName "checkpoints\$Checkpoint\pretrained_model"
 $evalRoot = Join-Path $env:USERPROFILE (".cache\huggingface\lerobot\local\rollout_so101_catfood_" + (Get-Date -Format "yyyyMMdd_HHmm"))
 $task = "Scoop cat food from the blue bowl and drop it into the red bowl."
 
+# Park over the blue bowl first: rollout captures the startup pose as its reset target
+& $py (Join-Path $PSScriptRoot "win_goto_start.py") COM7
+
 # lerobot 0.6.1 runs policies via lerobot-rollout (lerobot-record no longer accepts --policy.*)
 & $py -m lerobot.scripts.lerobot_rollout `
     "--strategy.type=episodic" `
+    "--strategy.reset_to_initial_position=true" `
     "--policy.path=$policy" `
     "--device=cpu" `
     "--robot.type=so101_follower" `
